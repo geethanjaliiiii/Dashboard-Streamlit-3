@@ -193,6 +193,7 @@ else:
 
     with row1_col:
         st.plotly_chart(fig1, use_container_width=True, key="daily_forecast_main")
+        
     # =====================================================
     # SECOND ROW: TWO PLOTS
     # LEFT: GFS VS DAILY FORECAST
@@ -404,23 +405,62 @@ else:
         with prev_right:
             fig_prev2 = go.Figure()
 
-            fig_prev2.add_trace(go.Scatter(
-                x=previous_df["valid_time_ist"],
-                y=previous_df["Actual_GHI"],
-                mode="lines+markers",
-                name="Actual GHI",
-                line=dict(dash="dot")
-            ))
+            previous_target_row = previous_df[
+                previous_df["valid_time_ist"] == two_hour_end_time - pd.Timedelta(days=1)
+            ]
 
-            fig_prev2.add_trace(go.Scatter(
-                x=previous_df["valid_time_ist"],
-                y=previous_df["GFS_GHI"],
-                mode="lines+markers",
-                name="GFS GHI"
-            ))
+            has_previous_two_hour_forecast = (
+                not previous_target_row.empty and
+                pd.notna(previous_target_row["Two_Hour_Ahead_Forecast"].iloc[0])
+            )
+
+            if has_previous_two_hour_forecast:
+                previous_two_hour_end_time = two_hour_end_time - pd.Timedelta(days=1)
+                previous_two_hour_start_time = previous_df["valid_time_ist"].min() + pd.Timedelta(hours=2)
+
+                previous_two_hour_df = previous_df[
+                    (previous_df["valid_time_ist"] >= previous_two_hour_start_time) &
+                    (previous_df["valid_time_ist"] <= previous_two_hour_end_time)
+                ].copy()
+
+                previous_two_hour_df = previous_two_hour_df.dropna(
+                    subset=["Two_Hour_Ahead_Forecast"]
+                )
+
+                fig_prev2.add_trace(go.Scatter(
+                    x=previous_two_hour_df["valid_time_ist"],
+                    y=previous_two_hour_df["Actual_GHI"],
+                    mode="lines+markers",
+                    name="Actual GHI",
+                    line=dict(dash="dot")
+                ))
+
+                fig_prev2.add_trace(go.Scatter(
+                    x=previous_two_hour_df["valid_time_ist"],
+                    y=previous_two_hour_df["GFS_GHI"],
+                    mode="lines+markers",
+                    name="GFS GHI"
+                ))
+
+                fig_prev2.add_trace(go.Scatter(
+                    x=previous_two_hour_df["valid_time_ist"],
+                    y=previous_two_hour_df["Two_Hour_Ahead_Forecast"],
+                    mode="lines+markers",
+                    name="2-Hour Ahead Forecast"
+                ))
+
+                prev2_tick_vals = previous_two_hour_df["valid_time_ist"]
+                prev2_tick_text = previous_two_hour_df["valid_time_ist"].dt.strftime("%H:%M").tolist()
+                prev2_title = "Previous Day: Actual vs GFS vs 2-Hour Ahead Forecast"
+
+            else:
+                prev2_tick_vals = previous_df["valid_time_ist"]
+                prev2_tick_text = previous_df["valid_time_ist"].dt.strftime("%H:%M").tolist()
+                prev2_title = "Previous Day: 2-Hour Ahead Forecast Not Available"
+                st.warning(f"No previous-day 2-hour ahead forecast data available for {previous_day} at selected time.")
 
             fig_prev2.update_layout(
-                title="Previous Day: Actual vs GFS",
+                title=prev2_title,
                 xaxis_title="Time",
                 yaxis_title="GHI",
                 height=450,
@@ -435,8 +475,8 @@ else:
 
             fig_prev2.update_xaxes(
                 tickmode="array",
-                tickvals=previous_df["valid_time_ist"],
-                ticktext=prev_tick_times
+                tickvals=prev2_tick_vals,
+                ticktext=prev2_tick_text
             )
 
             fig_prev2.update_yaxes(range=[0, prev_ymax])
@@ -444,7 +484,7 @@ else:
             st.plotly_chart(
                 fig_prev2,
                 use_container_width=True,
-                key="previous_day_actual_gfs"
+                key="previous_day_two_hour_actual_gfs"
             )
     # =====================================================
     # CUMULATIVE ERROR METRICS: START DATE TO PREVIOUS DAY
