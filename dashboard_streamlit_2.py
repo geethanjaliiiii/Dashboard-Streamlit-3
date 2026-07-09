@@ -695,7 +695,59 @@ else:
                 )
     
         with right_blank:
-            st.empty()
+            st.markdown("#### 2-Hour Ahead Forecast: Overall Performance")
+
+            two_hour_metrics_df = overall_df.dropna(
+                subset=["Two_Hour_Ahead_Forecast"]
+            ).copy()
+
+            if not two_hour_metrics_df.empty:
+
+                actual_2hr = two_hour_metrics_df["Actual_GHI"]
+                gfs_2hr = two_hour_metrics_df["GFS_GHI"]
+                daily_2hr = two_hour_metrics_df["Daily_Forecast_GHI"]
+                twohr_forecast = two_hour_metrics_df["Two_Hour_Ahead_Forecast"]
+
+                mape_gfs = ((actual_2hr - gfs_2hr).abs() / actual_2hr).mean() * 100
+                mape_daily = ((actual_2hr - daily_2hr).abs() / actual_2hr).mean() * 100
+                mape_2hr = ((actual_2hr - twohr_forecast).abs() / actual_2hr).mean() * 100
+
+                mae_gfs = (actual_2hr - gfs_2hr).abs().mean()
+                mae_daily = (actual_2hr - daily_2hr).abs().mean()
+                mae_2hr = (actual_2hr - twohr_forecast).abs().mean()
+
+                rmse_gfs = np.sqrt(((actual_2hr - gfs_2hr) ** 2).mean())
+                rmse_daily = np.sqrt(((actual_2hr - daily_2hr) ** 2).mean())
+                rmse_2hr = np.sqrt(((actual_2hr - twohr_forecast) ** 2).mean())
+
+                metric_table = pd.DataFrame({
+                    "Comparison": [
+                        "Actual vs GFS",
+                        "Actual vs Daily Forecast",
+                        "Actual vs 2-Hour Ahead"
+                    ],
+                    "MAPE (%)": [
+                        round(mape_gfs, 2),
+                        round(mape_daily, 2),
+                        round(mape_2hr, 2)
+                    ],
+                    "MAE": [
+                        round(mae_gfs, 2),
+                        round(mae_daily, 2),
+                        round(mae_2hr, 2)
+                    ],
+                    "RMSE": [
+                        round(rmse_gfs, 2),
+                        round(rmse_daily, 2),
+                        round(rmse_2hr, 2)
+                    ]
+                })
+
+                st.dataframe(metric_table, use_container_width=True, hide_index=True)
+
+            else:
+                st.warning("No valid 2-hour ahead forecast data available for overall performance.")
+          
     
     else:
         st.warning("Not enough valid data to calculate complete-dataset performance metrics.")
