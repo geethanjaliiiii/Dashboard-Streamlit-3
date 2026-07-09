@@ -162,7 +162,7 @@ else:
         ))
 
         fig2.update_layout(
-            title="Actual vs GFS vs Daily Forecast GHI"",
+            title="Actual vs GFS vs Daily Forecast GHI",
             xaxis_title="Time",
             yaxis_title="GHI",
             height=450
