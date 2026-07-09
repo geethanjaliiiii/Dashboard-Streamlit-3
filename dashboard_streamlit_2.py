@@ -649,22 +649,37 @@ else:
         overall_rmse_before = np.sqrt(((actual_all - before_all) ** 2).mean())
         overall_rmse_after = np.sqrt(((actual_all - after_all) ** 2).mean())
     
-        st.markdown("### 📌 Performance Summary on Complete Dataset")
-    
-        left_summary, right_blank = st.columns([1.2, 1])
-    
+        st.markdown("## 📌 Performance Summary on Complete Dataset")
+
+        left_summary, right_summary = st.columns([1, 1])
+
+        # =====================================================
+        # LEFT PANEL: DAILY FORECAST PERFORMANCE
+        # =====================================================
+
         with left_summary:
-            st.markdown("#### Daily Forecast GHI: Overall Forecast Performance")
+            st.markdown(
+                """
+                <div style="border:1px solid #bcdcff; border-radius:14px; padding:18px; background-color:#f8fbff;">
+                    <h3 style="margin-bottom:2px;">📈 Daily Forecast GHI: Overall Forecast Performance</h3>
+                    <p style="color:#557; margin-top:0;">Comparison of Original GFS vs Daily Forecast GHI</p>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
             k1, k2, k3 = st.columns(3)
 
             with k1:
                 st.markdown(
                     f"""
-                    <div style="border:1px solid #ddd; border-radius:10px; padding:20px; background-color:white;">
-                        <h4 style="color:#d71920;">MAPE</h4>
-                        <p><b>Before :</b> <span style="color:#1f4fd6; font-size:28px; font-weight:bold;">{overall_mape_before:.2f}%</span></p>
-                        <p><b>After :</b> <span style="color:red; font-size:28px; font-weight:bold;">{overall_mape_after:.2f}%</span></p>
+                    <div style="border:1px solid #bcdcff; border-radius:12px; padding:18px; background-color:white;">
+                        <h3 style="color:#1f4fd6;">🎯 MAPE (%)</h3>
+                        <hr>
+                        <p><b>Before (GFS)</b></p>
+                        <h2 style="color:#1f4fd6;">{overall_mape_before:.2f}%</h2>
+                        <p><b>After (Daily Forecast)</b></p>
+                        <h2 style="color:red;">{overall_mape_after:.2f}%</h2>
                     </div>
                     """,
                     unsafe_allow_html=True
@@ -673,10 +688,13 @@ else:
             with k2:
                 st.markdown(
                     f"""
-                    <div style="border:1px solid #ddd; border-radius:10px; padding:20px; background-color:white;">
-                        <h4 style="color:#d71920;">MAE</h4>
-                        <p><b>Before :</b> <span style="color:#1f4fd6; font-size:28px; font-weight:bold;">{overall_mae_before:.2f}</span></p>
-                        <p><b>After :</b> <span style="color:red; font-size:28px; font-weight:bold;">{overall_mae_after:.2f}</span></p>
+                    <div style="border:1px solid #bfe5c2; border-radius:12px; padding:18px; background-color:white;">
+                        <h3 style="color:#2e8b57;">📊 MAE</h3>
+                        <hr>
+                        <p><b>Before (GFS)</b></p>
+                        <h2 style="color:#1f4fd6;">{overall_mae_before:.2f}</h2>
+                        <p><b>After (Daily Forecast)</b></p>
+                        <h2 style="color:red;">{overall_mae_after:.2f}</h2>
                     </div>
                     """,
                     unsafe_allow_html=True
@@ -685,18 +703,23 @@ else:
             with k3:
                 st.markdown(
                     f"""
-                    <div style="border:1px solid #ddd; border-radius:10px; padding:20px; background-color:white;">
-                        <h4 style="color:#d71920;">RMSE</h4>
-                        <p><b>Before :</b> <span style="color:#1f4fd6; font-size:28px; font-weight:bold;">{overall_rmse_before:.2f}</span></p>
-                        <p><b>After :</b> <span style="color:red; font-size:28px; font-weight:bold;">{overall_rmse_after:.2f}</span></p>
+                    <div style="border:1px solid #d8c8ff; border-radius:12px; padding:18px; background-color:white;">
+                        <h3 style="color:#6f42c1;">〽️ RMSE</h3>
+                        <hr>
+                        <p><b>Before (GFS)</b></p>
+                        <h2 style="color:#1f4fd6;">{overall_rmse_before:.2f}</h2>
+                        <p><b>After (Daily Forecast)</b></p>
+                        <h2 style="color:red;">{overall_rmse_after:.2f}</h2>
                     </div>
                     """,
                     unsafe_allow_html=True
                 )
-    
-        with right_blank:
-            st.markdown("#### 2-Hour Ahead Forecast: Overall Performance")
 
+        # =====================================================
+        # RIGHT PANEL: 2-HOUR AHEAD PERFORMANCE
+        # =====================================================
+
+        with right_summary:
             two_hour_metrics_df = overall_df.dropna(
                 subset=["Two_Hour_Ahead_Forecast"]
             ).copy()
@@ -720,48 +743,79 @@ else:
                 rmse_daily = np.sqrt(((actual_2hr - daily_2hr) ** 2).mean())
                 rmse_2hr = np.sqrt(((actual_2hr - twohr_forecast) ** 2).mean())
 
-                k1, k2, k3 = st.columns(3)
+                st.markdown(
+                    """
+                    <div style="border:1px solid #f0c29b; border-radius:14px; padding:18px; background-color:#fffaf5;">
+                        <h3 style="margin-bottom:2px;">🕒 2-Hour Ahead Forecast: Overall Performance</h3>
+                        <p style="color:#775; margin-top:0;">Performance using only rows where 2-Hour Ahead Forecast is available</p>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
 
-                with k1:
+                h1, h2, h3 = st.columns(3)
+
+                with h1:
                     st.markdown(
                         f"""
-                        <div style="border:1px solid #f0c29b; border-radius:12px; padding:18px; background-color:#fffaf5;">
-                            <h4 style="color:#d95f02;">MAPE (%)</h4>
-                            <p><b>Actual vs GFS :</b><br><span style="color:#1f4fd6; font-size:24px; font-weight:bold;">{mape_gfs:.2f}%</span></p>
-                            <hr>
-                            <p><b>Actual vs Daily Forecast :</b><br><span style="color:#2e8b57; font-size:24px; font-weight:bold;">{mape_daily:.2f}%</span></p>
-                            <hr>
-                            <p><b>Actual vs 2-Hour Ahead :</b><br><span style="color:#d95f02; font-size:24px; font-weight:bold;">{mape_2hr:.2f}%</span></p>
+                        <div style="border:1px solid #f0c29b; border-radius:12px; padding:16px; background-color:white;">
+                            <h3 style="color:#d95f02;">🎯 MAPE (%)</h3>
+                            <div style="border-radius:10px; background-color:#f7fbff; padding:10px; margin-bottom:10px;">
+                                <b>Actual vs GFS</b><br>
+                                <span style="color:#1f4fd6; font-size:26px; font-weight:bold;">{mape_gfs:.2f}%</span>
+                            </div>
+                            <div style="border-radius:10px; background-color:#f8fff8; padding:10px; margin-bottom:10px;">
+                                <b>Actual vs Daily Forecast</b><br>
+                                <span style="color:#2e8b57; font-size:26px; font-weight:bold;">{mape_daily:.2f}%</span>
+                            </div>
+                            <div style="border-radius:10px; background-color:#fff7ef; padding:10px;">
+                                <b>Actual vs 2-Hour Ahead</b><br>
+                                <span style="color:#d95f02; font-size:26px; font-weight:bold;">{mape_2hr:.2f}%</span>
+                            </div>
                         </div>
                         """,
                         unsafe_allow_html=True
                     )
 
-                with k2:
+                with h2:
                     st.markdown(
                         f"""
-                        <div style="border:1px solid #f0c29b; border-radius:12px; padding:18px; background-color:#fffaf5;">
-                            <h4 style="color:#d95f02;">MAE</h4>
-                            <p><b>Actual vs GFS :</b><br><span style="color:#1f4fd6; font-size:24px; font-weight:bold;">{mae_gfs:.2f}</span></p>
-                            <hr>
-                            <p><b>Actual vs Daily Forecast :</b><br><span style="color:#2e8b57; font-size:24px; font-weight:bold;">{mae_daily:.2f}</span></p>
-                            <hr>
-                            <p><b>Actual vs 2-Hour Ahead :</b><br><span style="color:#d95f02; font-size:24px; font-weight:bold;">{mae_2hr:.2f}</span></p>
+                        <div style="border:1px solid #f0c29b; border-radius:12px; padding:16px; background-color:white;">
+                            <h3 style="color:#d95f02;">📊 MAE</h3>
+                            <div style="border-radius:10px; background-color:#f7fbff; padding:10px; margin-bottom:10px;">
+                                <b>Actual vs GFS</b><br>
+                                <span style="color:#1f4fd6; font-size:26px; font-weight:bold;">{mae_gfs:.2f}</span>
+                            </div>
+                            <div style="border-radius:10px; background-color:#f8fff8; padding:10px; margin-bottom:10px;">
+                                <b>Actual vs Daily Forecast</b><br>
+                                <span style="color:#2e8b57; font-size:26px; font-weight:bold;">{mae_daily:.2f}</span>
+                            </div>
+                            <div style="border-radius:10px; background-color:#fff7ef; padding:10px;">
+                                <b>Actual vs 2-Hour Ahead</b><br>
+                                <span style="color:#d95f02; font-size:26px; font-weight:bold;">{mae_2hr:.2f}</span>
+                            </div>
                         </div>
                         """,
                         unsafe_allow_html=True
                     )
 
-                with k3:
+                with h3:
                     st.markdown(
                         f"""
-                        <div style="border:1px solid #f0c29b; border-radius:12px; padding:18px; background-color:#fffaf5;">
-                            <h4 style="color:#d95f02;">RMSE</h4>
-                            <p><b>Actual vs GFS :</b><br><span style="color:#1f4fd6; font-size:24px; font-weight:bold;">{rmse_gfs:.2f}</span></p>
-                            <hr>
-                            <p><b>Actual vs Daily Forecast :</b><br><span style="color:#2e8b57; font-size:24px; font-weight:bold;">{rmse_daily:.2f}</span></p>
-                            <hr>
-                            <p><b>Actual vs 2-Hour Ahead :</b><br><span style="color:#d95f02; font-size:24px; font-weight:bold;">{rmse_2hr:.2f}</span></p>
+                        <div style="border:1px solid #f0c29b; border-radius:12px; padding:16px; background-color:white;">
+                            <h3 style="color:#d95f02;">〽️ RMSE</h3>
+                            <div style="border-radius:10px; background-color:#f7fbff; padding:10px; margin-bottom:10px;">
+                                <b>Actual vs GFS</b><br>
+                                <span style="color:#1f4fd6; font-size:26px; font-weight:bold;">{rmse_gfs:.2f}</span>
+                            </div>
+                            <div style="border-radius:10px; background-color:#f8fff8; padding:10px; margin-bottom:10px;">
+                                <b>Actual vs Daily Forecast</b><br>
+                                <span style="color:#2e8b57; font-size:26px; font-weight:bold;">{rmse_daily:.2f}</span>
+                            </div>
+                            <div style="border-radius:10px; background-color:#fff7ef; padding:10px;">
+                                <b>Actual vs 2-Hour Ahead</b><br>
+                                <span style="color:#d95f02; font-size:26px; font-weight:bold;">{rmse_2hr:.2f}</span>
+                            </div>
                         </div>
                         """,
                         unsafe_allow_html=True
@@ -769,3 +823,9 @@ else:
 
             else:
                 st.warning("No valid 2-hour ahead forecast data available for overall performance.")
+
+        st.info(
+            "Before (GFS): Original GFS forecast  |  "
+            "After (Daily Forecast): Daily Forecast GHI  |  "
+            "2-Hour Ahead: Short-term 2-hour ahead forecast"
+        )
