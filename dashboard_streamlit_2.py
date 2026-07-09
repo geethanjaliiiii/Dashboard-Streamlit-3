@@ -239,17 +239,35 @@ else:
 
 
     # =====================================================
-    # DAILY ERROR METRICS: BEFORE VS AFTER
+    # CUMULATIVE ERROR METRICS: START DATE TO PREVIOUS DAY
     # =====================================================
 
-    eval_df = day_df.dropna(
-        subset=["Actual_GHI", "GFS_GHI", "Daily_Forecast_GHI"]
-    ).copy()
+    selected_date_only = pd.to_datetime(selected_date).date()
+    previous_day = selected_date_only - pd.Timedelta(days=1)
 
-    # Avoid MAPE issue when actual GHI is very small
-    eval_df = eval_df[eval_df["Actual_GHI"] > 50]
+    eval_df = df[
+        df["valid_time_ist"].dt.date <= previous_day
+    ].copy()
+
+    eval_df = eval_df.dropna(
+        subset=["Actual_GHI", "GFS_GHI", "Daily_Forecast_GHI"]
+    )
+
+    eval_df["hour"] = (
+        eval_df["valid_time_ist"].dt.hour +
+        eval_df["valid_time_ist"].dt.minute / 60
+    )
+
+    eval_df = eval_df[
+        (eval_df["hour"] >= 6.5) &
+        (eval_df["hour"] <= 17.5) &
+        (eval_df["Actual_GHI"] > 50)
+    ].copy()
 
     if not eval_df.empty:
+
+        start_date = eval_df["valid_time_ist"].dt.date.min()
+        end_date = eval_df["valid_time_ist"].dt.date.max()
 
         actual = eval_df["Actual_GHI"]
         before = eval_df["GFS_GHI"]
@@ -264,49 +282,15 @@ else:
         mape_before = ((actual - before).abs() / actual).mean() * 100
         mape_after = ((actual - after).abs() / actual).mean() * 100
 
+        st.markdown(
+            f"### 📊 Cumulative Forecast Performance "
+            f"({start_date} to {end_date})"
+        )
+
         metric_col1, metric_col2, metric_col3 = st.columns(3)
 
+        # ---------------- MAPE ----------------
         with metric_col1:
-            fig_mae = go.Figure()
-
-            fig_mae.add_trace(go.Bar(
-                x=["Before", "After"],
-                y=[mae_before, mae_after],
-                text=[round(mae_before, 2), round(mae_after, 2)],
-                textposition="auto",
-                marker_color=["steelblue", "red"]
-            ))
-
-            fig_mae.update_layout(
-                title="MAE: Before vs After",
-                xaxis_title="Model",
-                yaxis_title="MAE",
-                height=350
-            )
-
-            st.plotly_chart(fig_mae, use_container_width=True, key="mae_chart")
-
-        with metric_col2:
-            fig_rmse = go.Figure()
-
-            fig_rmse.add_trace(go.Bar(
-                x=["Before", "After"],
-                y=[rmse_before, rmse_after],
-                text=[round(rmse_before, 2), round(rmse_after, 2)],
-                textposition="auto",
-                marker_color=["steelblue", "red"]
-            ))
-
-            fig_rmse.update_layout(
-                title="RMSE: Before vs After",
-                xaxis_title="Model",
-                yaxis_title="RMSE",
-                height=350
-            )
-
-            st.plotly_chart(fig_rmse, use_container_width=True, key="rmse_chart")
-
-        with metric_col3:
             fig_mape = go.Figure()
 
             fig_mape.add_trace(go.Bar(
@@ -318,13 +302,69 @@ else:
             ))
 
             fig_mape.update_layout(
-                title="MAPE: Before vs After",
+                title="MAPE",
                 xaxis_title="Model",
                 yaxis_title="MAPE (%)",
                 height=350
             )
 
-            st.plotly_chart(fig_mape, use_container_width=True, key="mape_chart")
+            st.plotly_chart(
+                fig_mape,
+                use_container_width=True,
+                key="mape_cumulative_chart"
+            )
+
+        # ---------------- MAE ----------------
+        with metric_col2:
+            fig_mae = go.Figure()
+
+            fig_mae.add_trace(go.Bar(
+                x=["Before", "After"],
+                y=[mae_before, mae_after],
+                text=[round(mae_before, 2), round(mae_after, 2)],
+                textposition="auto",
+                marker_color=["steelblue", "red"]
+            ))
+
+            fig_mae.update_layout(
+                title="MAE",
+                xaxis_title="Model",
+                yaxis_title="MAE",
+                height=350
+            )
+
+            st.plotly_chart(
+                fig_mae,
+                use_container_width=True,
+                key="mae_cumulative_chart"
+            )
+
+        # ---------------- RMSE ----------------
+        with metric_col3:
+            fig_rmse = go.Figure()
+
+            fig_rmse.add_trace(go.Bar(
+                x=["Before", "After"],
+                y=[rmse_before, rmse_after],
+                text=[round(rmse_before, 2), round(rmse_after, 2)],
+                textposition="auto",
+                marker_color=["steelblue", "red"]
+            ))
+
+            fig_rmse.update_layout(
+                title="RMSE",
+                xaxis_title="Model",
+                yaxis_title="RMSE",
+                height=350
+            )
+
+            st.plotly_chart(
+                fig_rmse,
+                use_container_width=True,
+                key="rmse_cumulative_chart"
+            )
 
     else:
-        st.warning("Not enough valid daytime data to calculate daily error metrics.")
+        st.warning(
+            "Not enough valid previous-day data to calculate cumulative forecast performance."
+        )
