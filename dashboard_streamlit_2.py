@@ -115,7 +115,7 @@ else:
             x=day_df["valid_time_ist"],
             y=day_df["Daily_Forecast_GHI"],
             mode="lines+markers",
-            name="Predicted GHI",
+            name="Daily Forecast GHI",
             line=dict(color="red"),
             marker=dict(color="red")
         ))
@@ -158,7 +158,7 @@ else:
             x=day_df["valid_time_ist"],
             y=day_df["Daily_Forecast_GHI"],
             mode="lines+markers",
-            name=""Daily Forecast GHI""
+            name="Daily Forecast GHI"
         ))
 
         fig2.update_layout(
