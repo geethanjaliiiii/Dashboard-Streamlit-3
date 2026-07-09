@@ -164,10 +164,8 @@ else:
             y=two_hour_df["Two_Hour_Ahead_Forecast"],
             mode="lines+markers",
             name="2-Hour Ahead Forecast",
-            line=dict(color="blue", width=2),
-            marker=dict(color="blue"),
-            fill="tozeroy",
-            fillcolor="rgba(0, 100, 255, 0.25)"
+            line=dict(color="blue", width=3),
+            marker=dict(color="blue", size=7)
         ))
     
     else:
