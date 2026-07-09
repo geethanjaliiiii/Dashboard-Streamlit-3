@@ -674,7 +674,7 @@ else:
                 st.markdown(
                     f"""
                     <div style="border:1px solid #bcdcff; border-radius:12px; padding:18px; background-color:white;">
-                        <h3 style="color:#1f4fd6;">🎯 MAPE (%)</h3>
+                        <h3 style="color:#1f4fd6;">🎯 MAPE</h3>
                         <hr>
                         <p><b>Before (GFS)</b></p>
                         <h2 style="color:#1f4fd6;">{overall_mape_before:.2f}%</h2>
@@ -759,7 +759,7 @@ else:
                     st.markdown(
                         f"""
                         <div style="border:1px solid #f0c29b; border-radius:12px; padding:16px; background-color:white;">
-                            <h3 style="color:#d95f02;">🎯 MAPE (%)</h3>
+                            <h3 style="color:#d95f02;">🎯 MAPE</h3>
                             <div style="border-radius:10px; background-color:#f7fbff; padding:10px; margin-bottom:10px;">
                                 <b>Actual vs GFS</b><br>
                                 <span style="color:#1f4fd6; font-size:26px; font-weight:bold;">{mape_gfs:.2f}%</span>
