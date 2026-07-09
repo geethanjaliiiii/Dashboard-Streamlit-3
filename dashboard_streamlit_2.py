@@ -151,8 +151,10 @@ else:
         y=day_df["Daily_Forecast_GHI"],
         mode="lines+markers",
         name="Daily Forecast GHI",
-        line=dict(color="red"),
-        marker=dict(color="red")
+        line=dict(color="red", width=2),
+        marker=dict(color="red"),
+        fill="tozeroy",
+        fillcolor="rgba(255, 0, 0, 0.25)"
     ))
 
     if has_two_hour_forecast:
@@ -161,7 +163,11 @@ else:
             x=two_hour_df["valid_time_ist"],
             y=two_hour_df["Two_Hour_Ahead_Forecast"],
             mode="lines+markers",
-            name="2-Hour Ahead Forecast"
+            name="2-Hour Ahead Forecast",
+            line=dict(color="blue", width=2),
+            marker=dict(color="blue"),
+            fill="tozeroy",
+            fillcolor="rgba(0, 100, 255, 0.25)"
         ))
     
     else:
