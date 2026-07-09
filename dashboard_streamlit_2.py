@@ -554,24 +554,17 @@ else:
         left_summary, right_blank = st.columns([1.2, 1])
     
         with left_summary:
-            st.markdown("### 📌 Daily Forecast GHI: Overall Forecast Performance")
+            st.markdown("#### Daily Forecast GHI: Overall Forecast Performance")
 
             k1, k2, k3 = st.columns(3)
 
             with k1:
                 st.markdown(
                     f"""
-                    <div style="
-                        border:1px solid #ddd;
-                        border-radius:10px;
-                        padding:20px;
-                        background-color:white;
-                    ">
+                    <div style="border:1px solid #ddd; border-radius:10px; padding:20px; background-color:white;">
                         <h4 style="color:#d71920;">MAPE</h4>
-                        <p style="font-size:16px; margin-bottom:5px;">Before</p>
-                        <h2 style="color:#1f4fd6;">{overall_mape_before:.2f}%</h2>
-                        <p style="font-size:16px; margin-bottom:5px;">After</p>
-                        <h2 style="color:red;">{overall_mape_after:.2f}%</h2>
+                        <p><b>Before :</b> <span style="color:#1f4fd6; font-size:28px; font-weight:bold;">{overall_mape_before:.2f}%</span></p>
+                        <p><b>After :</b> <span style="color:red; font-size:28px; font-weight:bold;">{overall_mape_after:.2f}%</span></p>
                     </div>
                     """,
                     unsafe_allow_html=True
@@ -580,17 +573,10 @@ else:
             with k2:
                 st.markdown(
                     f"""
-                    <div style="
-                        border:1px solid #ddd;
-                        border-radius:10px;
-                        padding:20px;
-                        background-color:white;
-                    ">
+                    <div style="border:1px solid #ddd; border-radius:10px; padding:20px; background-color:white;">
                         <h4 style="color:#d71920;">MAE</h4>
-                        <p style="font-size:16px; margin-bottom:5px;">Before</p>
-                        <h2 style="color:#1f4fd6;">{overall_mae_before:.2f}</h2>
-                        <p style="font-size:16px; margin-bottom:5px;">After</p>
-                        <h2 style="color:red;">{overall_mae_after:.2f}</h2>
+                        <p><b>Before :</b> <span style="color:#1f4fd6; font-size:28px; font-weight:bold;">{overall_mae_before:.2f}</span></p>
+                        <p><b>After :</b> <span style="color:red; font-size:28px; font-weight:bold;">{overall_mae_after:.2f}</span></p>
                     </div>
                     """,
                     unsafe_allow_html=True
@@ -599,17 +585,10 @@ else:
             with k3:
                 st.markdown(
                     f"""
-                    <div style="
-                        border:1px solid #ddd;
-                        border-radius:10px;
-                        padding:20px;
-                        background-color:white;
-                    ">
+                    <div style="border:1px solid #ddd; border-radius:10px; padding:20px; background-color:white;">
                         <h4 style="color:#d71920;">RMSE</h4>
-                        <p style="font-size:16px; margin-bottom:5px;">Before</p>
-                        <h2 style="color:#1f4fd6;">{overall_rmse_before:.2f}</h2>
-                        <p style="font-size:16px; margin-bottom:5px;">After</p>
-                        <h2 style="color:red;">{overall_rmse_after:.2f}</h2>
+                        <p><b>Before :</b> <span style="color:#1f4fd6; font-size:28px; font-weight:bold;">{overall_rmse_before:.2f}</span></p>
+                        <p><b>After :</b> <span style="color:red; font-size:28px; font-weight:bold;">{overall_rmse_after:.2f}</span></p>
                     </div>
                     """,
                     unsafe_allow_html=True
