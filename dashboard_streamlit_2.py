@@ -696,7 +696,6 @@ else:
     
         with right_blank:
             st.markdown("#### 2-Hour Ahead Forecast: Overall Performance")
-            st.caption("Calculated only for rows where 2-Hour Ahead Forecast is available")
 
             two_hour_metrics_df = overall_df.dropna(
                 subset=["Two_Hour_Ahead_Forecast"]
