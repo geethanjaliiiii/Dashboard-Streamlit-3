@@ -19,11 +19,11 @@ st.set_page_config(
 )
 
 st.markdown(
-    "<h1 style='text-align: center;'>☀️ Solar Power Forecasting & DSM Performance Dashboard</h1>",
+    "<h1 style='text-align: center;'>☀️ Solar Power Forecasting Dashboard</h1>",
     unsafe_allow_html=True
 )
 
-DATA_PATH = "dashboard_predictions.csv"
+DATA_PATH = "Bias Correction_with_Day_Ahead_Forecast.csv"
 
 @st.cache_data
 def load_data():
@@ -34,7 +34,7 @@ def load_data():
     df = df.rename(columns={
         "avg_ghi": "GFS_GHI",
         "ALLSKY_SFC_SW_DWN": "Actual_GHI",
-        "GHI_corrected": "Predicted_GHI"
+        "Day_Ahead_Forecast": "Daily_Forecast_GHI"
     })
 
     df = df.sort_values("valid_time_ist").reset_index(drop=True)
@@ -101,7 +101,7 @@ else:
     ymax = max(
         day_df["Actual_GHI"].max(),
         day_df["GFS_GHI"].max(),
-        day_df["Predicted_GHI"].max()
+        day_df["Daily_Forecast_GHI"].max()
     )
 
     ymax = (int(ymax / 100) + 1) * 100
@@ -113,7 +113,7 @@ else:
 
         fig1.add_trace(go.Scatter(
             x=day_df["valid_time_ist"],
-            y=day_df["Predicted_GHI"],
+            y=day_df["Daily_Forecast_GHI"],
             mode="lines+markers",
             name="Predicted GHI",
             line=dict(color="red"),
@@ -121,7 +121,7 @@ else:
         ))
 
         fig1.update_layout(
-            title="Predicted GHI",
+            title="Daily Forecast GHI",
             xaxis_title="Time",
             yaxis_title="GHI",
             height=450
@@ -156,13 +156,13 @@ else:
 
         fig2.add_trace(go.Scatter(
             x=day_df["valid_time_ist"],
-            y=day_df["Predicted_GHI"],
+            y=day_df["Daily_Forecast_GHI"],
             mode="lines+markers",
-            name="Predicted GHI"
+            name=""Daily Forecast GHI""
         ))
 
         fig2.update_layout(
-            title="Actual vs GFS vs Predicted GHI",
+            title="Actual vs GFS vs Daily Forecast GHI"",
             xaxis_title="Time",
             yaxis_title="GHI",
             height=450
@@ -184,7 +184,7 @@ else:
     # =====================================================
 
     eval_df = day_df.dropna(
-        subset=["Actual_GHI", "GFS_GHI", "Predicted_GHI"]
+        subset=["Actual_GHI", "GFS_GHI", "Daily_Forecast_GHI"]
     ).copy()
 
     # Avoid MAPE issue when actual GHI is very small
@@ -194,7 +194,7 @@ else:
 
         actual = eval_df["Actual_GHI"]
         before = eval_df["GFS_GHI"]
-        after = eval_df["Predicted_GHI"]
+        after = eval_df["Daily_Forecast_GHI"]
 
         mae_before = (actual - before).abs().mean()
         mae_after = (actual - after).abs().mean()
