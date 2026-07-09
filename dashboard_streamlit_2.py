@@ -194,9 +194,74 @@ else:
     fig1.update_yaxes(range=[0, ymax])
 
     row1_col, row1_space = st.columns([4.5, 0.8])
-
+    
     with row1_col:
         st.plotly_chart(fig1, use_container_width=True, key="daily_forecast_main")
+
+    with row1_space:
+        st.markdown("### 📥 Downloads")
+    
+        download_cols = [
+            "valid_time_ist",
+            "Actual_GHI",
+            "GFS_GHI",
+            "Daily_Forecast_GHI",
+            "Two_Hour_Ahead_Forecast"
+        ]
+    
+        rename_download_cols = {
+            "valid_time_ist": "Time",
+            "Actual_GHI": "Actual GHI",
+            "GFS_GHI": "GFS GHI",
+            "Daily_Forecast_GHI": "Day Ahead Forecast GHI",
+            "Two_Hour_Ahead_Forecast": "2-Hour Ahead Forecast GHI"
+        }
+    
+        # -----------------------------
+        # 1) Data from start to selected date
+        # -----------------------------
+        cumulative_download_df = df[
+            df["valid_time_ist"].dt.date <= selected_date
+        ].copy()
+    
+        cumulative_download_df["hour"] = (
+            cumulative_download_df["valid_time_ist"].dt.hour +
+            cumulative_download_df["valid_time_ist"].dt.minute / 60
+        )
+    
+        cumulative_download_df = cumulative_download_df[
+            (cumulative_download_df["hour"] >= 6.5) &
+            (cumulative_download_df["hour"] <= 17.5)
+        ].copy()
+    
+        cumulative_download_df = cumulative_download_df[download_cols].rename(
+            columns=rename_download_cols
+        )
+    
+        cumulative_csv = cumulative_download_df.to_csv(index=False).encode("utf-8")
+    
+        st.download_button(
+            label="Download data till selected date",
+            data=cumulative_csv,
+            file_name=f"forecast_data_till_{selected_date}.csv",
+            mime="text/csv"
+        )
+    
+        # -----------------------------
+        # 2) Selected date only
+        # -----------------------------
+        day_download_df = day_df[download_cols].copy().rename(
+            columns=rename_download_cols
+        )
+    
+        day_csv = day_download_df.to_csv(index=False).encode("utf-8")
+    
+        st.download_button(
+            label="Download selected day data",
+            data=day_csv,
+            file_name=f"forecast_data_{selected_date}.csv",
+            mime="text/csv"
+        )
         
     # =====================================================
     # SECOND ROW: TWO PLOTS
