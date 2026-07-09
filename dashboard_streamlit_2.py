@@ -145,12 +145,14 @@ else:
 
     fig1.update_yaxes(range=[0, ymax])
 
-    st.plotly_chart(fig1, use_container_width=True)
+    row1_col, row1_space = st.columns([5, 0.4])
 
+with row1_col:
+    st.plotly_chart(fig1, use_container_width=True)
     # =====================================================
     # SECOND ROW: TWO PLOTS
     # LEFT: GFS VS DAILY FORECAST
-    # RIGHT: ACTUAL GHI ONLY
+    # RIGHT: DAILY FORECAST GHI ONLY
     # =====================================================
 
     left_col, right_col = st.columns(2)
