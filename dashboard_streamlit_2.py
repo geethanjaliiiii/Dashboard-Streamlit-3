@@ -205,13 +205,16 @@ with row1_col:
 
         fig3.add_trace(go.Scatter(
             x=day_df["valid_time_ist"],
-            y=day_df["Actual_GHI"],
+            y=day_df["Daily_Forecast_GHI"],
             mode="lines+markers",
-            name="Actual GHI"
+            name="Daily Forecast GHI",
+            line=dict(color="red"),
+            marker=dict(color="red")
+          
         ))
 
         fig3.update_layout(
-            title="Actual GHI",
+            title="Daily Forecast GHI",
             xaxis_title="Time",
             yaxis_title="GHI",
             height=450,
