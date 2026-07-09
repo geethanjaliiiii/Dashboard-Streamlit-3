@@ -418,10 +418,9 @@ else:
                 previous_two_hour_end_time = two_hour_end_time - pd.Timedelta(days=1)
                 previous_two_hour_start_time = previous_df["valid_time_ist"].min() + pd.Timedelta(hours=2)
 
-                previous_two_hour_df = previous_df[
-                    (previous_df["valid_time_ist"] >= previous_two_hour_start_time) &
-                    (previous_df["valid_time_ist"] <= previous_two_hour_end_time)
-                ].copy()
+                previous_two_hour_df = previous_df.dropna(
+                    subset=["Two_Hour_Ahead_Forecast"]
+                ).copy()
 
                 previous_two_hour_df = previous_two_hour_df.dropna(
                     subset=["Two_Hour_Ahead_Forecast"]
