@@ -23,7 +23,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-DATA_PATH = "Bias Correction_with_Day_Ahead_Forecast.csv"
+DATA_PATH = "Bias Correction_with_Day_Ahead_2hrahead_Forecast.csv"
 
 @st.cache_data
 def load_data():
@@ -34,7 +34,8 @@ def load_data():
     df = df.rename(columns={
         "avg_ghi": "GFS_GHI",
         "ALLSKY_SFC_SW_DWN": "Actual_GHI",
-        "Day_Ahead_Forecast": "Daily_Forecast_GHI"
+        "Day_Ahead_Forecast": "Daily_Forecast_GHI",
+        "2hr_ahead_forecast": "Two_Hour_Ahead_Forecast"
     })
 
     df = df.sort_values("valid_time_ist").reset_index(drop=True)
@@ -90,6 +91,33 @@ day_df = day_df[
     (day_df["hour"] <= 17.5)
 ].copy()
 
+selected_datetime = pd.to_datetime(
+    str(selected_date) + " " + selected_time.strftime("%H:%M")
+)
+
+two_hour_end_time = selected_datetime + pd.Timedelta(hours=2)
+
+target_row = day_df[
+    day_df["valid_time_ist"] == two_hour_end_time
+]
+
+has_two_hour_forecast = (
+    not target_row.empty and
+    pd.notna(target_row["Two_Hour_Ahead_Forecast"].iloc[0])
+)
+
+if has_two_hour_forecast:
+    two_hour_df = day_df[
+        day_df["valid_time_ist"] <= two_hour_end_time
+    ].copy()
+
+    two_hour_df = two_hour_df.dropna(
+        subset=["Two_Hour_Ahead_Forecast"]
+    )
+else:
+    two_hour_df = pd.DataFrame()
+
+
 if day_df.empty:
     st.warning("No data available for the selected date.")
 
@@ -122,6 +150,18 @@ else:
         line=dict(color="red"),
         marker=dict(color="red")
     ))
+
+    if has_two_hour_forecast:
+        
+        fig1.add_trace(go.Scatter(
+            x=two_hour_df["valid_time_ist"],
+            y=two_hour_df["Two_Hour_Ahead_Forecast"],
+            mode="lines+markers",
+            name="2-Hour Ahead Forecast"
+        ))
+    
+    else:
+        st.warning("No data available for 2-hour ahead forecast for the selected time on selected date.")
 
     fig1.update_layout(
         title="Daily Forecast GHI",
