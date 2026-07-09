@@ -309,20 +309,8 @@ else:
         fig3.update_yaxes(range=[0, ymax])
 
         if fig3_note is not None:
-            fig3.add_annotation(
-                text=fig3_note,
-                xref="paper",
-                yref="paper",
-                x=0.5,
-                y=0.5,
-                showarrow=False,
-                font=dict(size=15, color="red"),
-                align="center",
-                bordercolor="red",
-                borderwidth=1,
-                borderpad=8,
-                bgcolor="rgba(255,255,255,0.85)"
-            )
+            
+            st.warning(fig3_note)
 
         st.plotly_chart(fig3, use_container_width=True, key="two_hour_gfs_comparison")
 
