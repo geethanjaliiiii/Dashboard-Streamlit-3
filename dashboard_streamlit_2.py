@@ -696,6 +696,7 @@ else:
     
         with right_blank:
             st.markdown("#### 2-Hour Ahead Forecast: Overall Performance")
+            st.caption("Calculated only for rows where 2-Hour Ahead Forecast is available")
 
             two_hour_metrics_df = overall_df.dropna(
                 subset=["Two_Hour_Ahead_Forecast"]
@@ -720,34 +721,52 @@ else:
                 rmse_daily = np.sqrt(((actual_2hr - daily_2hr) ** 2).mean())
                 rmse_2hr = np.sqrt(((actual_2hr - twohr_forecast) ** 2).mean())
 
-                metric_table = pd.DataFrame({
-                    "Comparison": [
-                        "Actual vs GFS",
-                        "Actual vs Daily Forecast",
-                        "Actual vs 2-Hour Ahead"
-                    ],
-                    "MAPE (%)": [
-                        round(mape_gfs, 2),
-                        round(mape_daily, 2),
-                        round(mape_2hr, 2)
-                    ],
-                    "MAE": [
-                        round(mae_gfs, 2),
-                        round(mae_daily, 2),
-                        round(mae_2hr, 2)
-                    ],
-                    "RMSE": [
-                        round(rmse_gfs, 2),
-                        round(rmse_daily, 2),
-                        round(rmse_2hr, 2)
-                    ]
-                })
+                k1, k2, k3 = st.columns(3)
 
-                st.dataframe(metric_table, use_container_width=True, hide_index=True)
+                with k1:
+                    st.markdown(
+                        f"""
+                        <div style="border:1px solid #f0c29b; border-radius:12px; padding:18px; background-color:#fffaf5;">
+                            <h4 style="color:#d95f02;">MAPE (%)</h4>
+                            <p><b>Actual vs GFS :</b><br><span style="color:#1f4fd6; font-size:24px; font-weight:bold;">{mape_gfs:.2f}%</span></p>
+                            <hr>
+                            <p><b>Actual vs Daily Forecast :</b><br><span style="color:#2e8b57; font-size:24px; font-weight:bold;">{mape_daily:.2f}%</span></p>
+                            <hr>
+                            <p><b>Actual vs 2-Hour Ahead :</b><br><span style="color:#d95f02; font-size:24px; font-weight:bold;">{mape_2hr:.2f}%</span></p>
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+                with k2:
+                    st.markdown(
+                        f"""
+                        <div style="border:1px solid #f0c29b; border-radius:12px; padding:18px; background-color:#fffaf5;">
+                            <h4 style="color:#d95f02;">MAE</h4>
+                            <p><b>Actual vs GFS :</b><br><span style="color:#1f4fd6; font-size:24px; font-weight:bold;">{mae_gfs:.2f}</span></p>
+                            <hr>
+                            <p><b>Actual vs Daily Forecast :</b><br><span style="color:#2e8b57; font-size:24px; font-weight:bold;">{mae_daily:.2f}</span></p>
+                            <hr>
+                            <p><b>Actual vs 2-Hour Ahead :</b><br><span style="color:#d95f02; font-size:24px; font-weight:bold;">{mae_2hr:.2f}</span></p>
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+                with k3:
+                    st.markdown(
+                        f"""
+                        <div style="border:1px solid #f0c29b; border-radius:12px; padding:18px; background-color:#fffaf5;">
+                            <h4 style="color:#d95f02;">RMSE</h4>
+                            <p><b>Actual vs GFS :</b><br><span style="color:#1f4fd6; font-size:24px; font-weight:bold;">{rmse_gfs:.2f}</span></p>
+                            <hr>
+                            <p><b>Actual vs Daily Forecast :</b><br><span style="color:#2e8b57; font-size:24px; font-weight:bold;">{rmse_daily:.2f}</span></p>
+                            <hr>
+                            <p><b>Actual vs 2-Hour Ahead :</b><br><span style="color:#d95f02; font-size:24px; font-weight:bold;">{rmse_2hr:.2f}</span></p>
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
 
             else:
                 st.warning("No valid 2-hour ahead forecast data available for overall performance.")
-          
-    
-    else:
-        st.warning("Not enough valid data to calculate complete-dataset performance metrics.")
