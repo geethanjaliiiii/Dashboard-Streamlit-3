@@ -554,71 +554,22 @@ else:
         left_summary, right_blank = st.columns([1.2, 1])
     
         with left_summary:
-            st.markdown(
-                f"""
-                <div style="
-                    border: 1px solid #ddd;
-                    border-radius: 14px;
-                    padding: 18px;
-                    background-color: #fafafa;
-                    box-shadow: 0px 2px 8px rgba(0,0,0,0.08);
-                ">
-                    <h4 style="text-align:center; margin-bottom:18px;">
-                        Daily Forecast GHI: Before vs After
-                    </h4>
-    
-                    <div style="display:flex; gap:12px; justify-content:space-between;">
-    
-                        <div style="
-                            flex:1;
-                            border-radius:12px;
-                            padding:12px;
-                            background-color:white;
-                            text-align:center;
-                            border-top:5px solid steelblue;
-                        ">
-                            <h5>MAPE</h5>
-                            <p style="font-size:14px; margin:4px;">Before</p>
-                            <h3>{overall_mape_before:.2f}%</h3>
-                            <p style="font-size:14px; margin:4px;">After</p>
-                            <h3 style="color:red;">{overall_mape_after:.2f}%</h3>
-                        </div>
-    
-                        <div style="
-                            flex:1;
-                            border-radius:12px;
-                            padding:12px;
-                            background-color:white;
-                            text-align:center;
-                            border-top:5px solid steelblue;
-                        ">
-                            <h5>MAE</h5>
-                            <p style="font-size:14px; margin:4px;">Before</p>
-                            <h3>{overall_mae_before:.2f}</h3>
-                            <p style="font-size:14px; margin:4px;">After</p>
-                            <h3 style="color:red;">{overall_mae_after:.2f}</h3>
-                        </div>
-    
-                        <div style="
-                            flex:1;
-                            border-radius:12px;
-                            padding:12px;
-                            background-color:white;
-                            text-align:center;
-                            border-top:5px solid steelblue;
-                        ">
-                            <h5>RMSE</h5>
-                            <p style="font-size:14px; margin:4px;">Before</p>
-                            <h3>{overall_rmse_before:.2f}</h3>
-                            <p style="font-size:14px; margin:4px;">After</p>
-                            <h3 style="color:red;">{overall_rmse_after:.2f}</h3>
-                        </div>
-    
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+            
+            st.markdown("#### Daily Forecast GHI: Before vs After")
+
+            m1, m2, m3 = st.columns(3)
+
+            with m1:
+                st.metric("MAPE Before", f"{overall_mape_before:.2f}%")
+                st.metric("MAPE After", f"{overall_mape_after:.2f}%")
+
+            with m2:
+                st.metric("MAE Before", f"{overall_mae_before:.2f}")
+                st.metric("MAE After", f"{overall_mae_after:.2f}")
+
+            with m3:
+                st.metric("RMSE Before", f"{overall_rmse_before:.2f}")
+                st.metric("RMSE After", f"{overall_rmse_after:.2f}")
     
         with right_blank:
             st.empty()
