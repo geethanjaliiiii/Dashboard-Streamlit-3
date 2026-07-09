@@ -28,7 +28,11 @@ DATA_PATH = "Bias Correction_with_Day_Ahead_2hrahead_Forecast.csv"
 @st.cache_data
 def load_data():
     df = pd.read_csv(DATA_PATH)
-
+    
+    df["valid_time_ist"] = (
+        pd.to_datetime(df["valid_time_ist"])
+          .dt.tz_localize(None)
+    )
     df["valid_time_ist"] = pd.to_datetime(df["valid_time_ist"])
 
     df = df.rename(columns={
