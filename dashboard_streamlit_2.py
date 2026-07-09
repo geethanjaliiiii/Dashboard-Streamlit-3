@@ -74,7 +74,7 @@ with c4:
     selected_time = st.selectbox(
         "Time",
         options=time_options,
-        format_func=lambda t: t.strftime("%I:%M %p")
+        format_func=lambda t: t.strftime("%H:%M")
     )
 
 
@@ -205,16 +205,13 @@ else:
 
         fig3.add_trace(go.Scatter(
             x=day_df["valid_time_ist"],
-            y=day_df["Daily_Forecast_GHI"],
+            y=day_df["GFS_GHI"],
             mode="lines+markers",
-            name="Daily Forecast GHI",
-            line=dict(color="red"),
-            marker=dict(color="red")
-          
+            name="GFS GHI"
         ))
 
         fig3.update_layout(
-            title="Daily Forecast GHI",
+            title="GFS GHI",
             xaxis_title="Time",
             yaxis_title="GHI",
             height=450,
@@ -237,7 +234,157 @@ else:
 
         st.plotly_chart(fig3, use_container_width=True, key="daily_forecast_side")
 
+    
+        # =====================================================
+    # PREVIOUS DAY COMPARISON PLOTS
+    # =====================================================
 
+    selected_date_only = pd.to_datetime(selected_date).date()
+    previous_day = selected_date_only - pd.Timedelta(days=1)
+
+    previous_df = df[
+        df["valid_time_ist"].dt.date == previous_day
+    ].copy()
+
+    previous_df["hour"] = (
+        previous_df["valid_time_ist"].dt.hour +
+        previous_df["valid_time_ist"].dt.minute / 60
+    )
+
+    previous_df = previous_df[
+        (previous_df["hour"] >= 6.5) &
+        (previous_df["hour"] <= 17.5)
+    ].copy()
+
+    if previous_df.empty:
+        st.warning(f"No previous-day data available for {previous_day}.")
+
+    else:
+        st.markdown(f"### 📈 Previous Day Performance Comparison ({previous_day})")
+
+        prev_ymax = max(
+            previous_df["Actual_GHI"].max(),
+            previous_df["GFS_GHI"].max(),
+            previous_df["Daily_Forecast_GHI"].max()
+        )
+
+        prev_ymax = (int(prev_ymax / 100) + 1) * 100
+
+        prev_tick_times = previous_df["valid_time_ist"].dt.strftime("%H:%M").tolist()
+
+        prev_left, prev_right = st.columns(2)
+
+        # =====================================================
+        # PREVIOUS DAY LEFT PLOT
+        # Actual GHI dotted + GFS GHI + Daily Forecast GHI
+        # =====================================================
+
+        with prev_left:
+            fig_prev1 = go.Figure()
+
+            fig_prev1.add_trace(go.Scatter(
+                x=previous_df["valid_time_ist"],
+                y=previous_df["Actual_GHI"],
+                mode="lines+markers",
+                name="Actual GHI",
+                line=dict(dash="dot")
+            ))
+
+            fig_prev1.add_trace(go.Scatter(
+                x=previous_df["valid_time_ist"],
+                y=previous_df["GFS_GHI"],
+                mode="lines+markers",
+                name="GFS GHI"
+            ))
+
+            fig_prev1.add_trace(go.Scatter(
+                x=previous_df["valid_time_ist"],
+                y=previous_df["Daily_Forecast_GHI"],
+                mode="lines+markers",
+                name="Daily Forecast GHI",
+                line=dict(color="red"),
+                marker=dict(color="red")
+            ))
+
+            fig_prev1.update_layout(
+                title="Previous Day: Actual vs GFS vs Daily Forecast",
+                xaxis_title="Time",
+                yaxis_title="GHI",
+                height=450,
+                legend=dict(
+                    orientation="h",
+                    yanchor="bottom",
+                    y=1.02,
+                    xanchor="right",
+                    x=1
+                )
+            )
+
+            fig_prev1.update_xaxes(
+                tickmode="array",
+                tickvals=previous_df["valid_time_ist"],
+                ticktext=prev_tick_times
+            )
+
+            fig_prev1.update_yaxes(range=[0, prev_ymax])
+
+            st.plotly_chart(
+                fig_prev1,
+                use_container_width=True,
+                key="previous_day_actual_gfs_forecast"
+            )
+
+        # =====================================================
+        # PREVIOUS DAY RIGHT PLOT
+        # Actual GHI dotted + GFS GHI
+        # More series can be added later
+        # =====================================================
+
+        with prev_right:
+            fig_prev2 = go.Figure()
+
+            fig_prev2.add_trace(go.Scatter(
+                x=previous_df["valid_time_ist"],
+                y=previous_df["Actual_GHI"],
+                mode="lines+markers",
+                name="Actual GHI",
+                line=dict(dash="dot")
+            ))
+
+            fig_prev2.add_trace(go.Scatter(
+                x=previous_df["valid_time_ist"],
+                y=previous_df["GFS_GHI"],
+                mode="lines+markers",
+                name="GFS GHI"
+            ))
+
+            fig_prev2.update_layout(
+                title="Previous Day: Actual vs GFS",
+                xaxis_title="Time",
+                yaxis_title="GHI",
+                height=450,
+                legend=dict(
+                    orientation="h",
+                    yanchor="bottom",
+                    y=1.02,
+                    xanchor="right",
+                    x=1
+                )
+            )
+
+            fig_prev2.update_xaxes(
+                tickmode="array",
+                tickvals=previous_df["valid_time_ist"],
+                ticktext=prev_tick_times
+            )
+
+            fig_prev2.update_yaxes(range=[0, prev_ymax])
+
+            st.plotly_chart(
+                fig_prev2,
+                use_container_width=True,
+                key="previous_day_actual_gfs"
+            )
     # =====================================================
     # CUMULATIVE ERROR METRICS: START DATE TO PREVIOUS DAY
     # =====================================================
