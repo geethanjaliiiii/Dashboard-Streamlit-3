@@ -549,27 +549,51 @@ else:
         overall_rmse_before = np.sqrt(((actual_all - before_all) ** 2).mean())
         overall_rmse_after = np.sqrt(((actual_all - after_all) ** 2).mean())
     
-        st.markdown("### 📌 Overall Forecast Performance on Complete Dataset")
+        st.markdown("### 📌 Performance Summary on Complete Dataset")
     
         left_summary, right_blank = st.columns([1.2, 1])
     
         with left_summary:
             
-            st.markdown("#### Daily Forecast GHI: Before vs After")
+            st.markdown("#### 📊 Daily Forecast GHI: Before vs After")
 
-            m1, m2, m3 = st.columns(3)
-
-            with m1:
-                st.metric("MAPE Before", f"{overall_mape_before:.2f}%")
-                st.metric("MAPE After", f"{overall_mape_after:.2f}%")
-
-            with m2:
-                st.metric("MAE Before", f"{overall_mae_before:.2f}")
-                st.metric("MAE After", f"{overall_mae_after:.2f}")
-
-            with m3:
-                st.metric("RMSE Before", f"{overall_rmse_before:.2f}")
-                st.metric("RMSE After", f"{overall_rmse_after:.2f}")
+            c1, c2, c3 = st.columns(3)
+        
+            with c1:
+                with st.container(border=True):
+                    st.markdown("### MAPE")
+                    st.metric(
+                        "Before",
+                        f"{overall_mape_before:.2f}%"
+                    )
+                    st.metric(
+                        "After",
+                        f"{overall_mape_after:.2f}%"
+                    )
+        
+            with c2:
+                with st.container(border=True):
+                    st.markdown("### MAE")
+                    st.metric(
+                        "Before",
+                        f"{overall_mae_before:.2f}"
+                    )
+                    st.metric(
+                        "After",
+                        f"{overall_mae_after:.2f}"
+                    )
+        
+            with c3:
+                with st.container(border=True):
+                    st.markdown("### RMSE")
+                    st.metric(
+                        "Before",
+                        f"{overall_rmse_before:.2f}"
+                    )
+                    st.metric(
+                        "After",
+                        f"{overall_rmse_after:.2f}"
+                    )
     
         with right_blank:
             st.empty()
