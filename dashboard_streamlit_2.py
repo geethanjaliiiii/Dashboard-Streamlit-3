@@ -165,7 +165,7 @@ else:
         ))
     
     else:
-        st.warning("No data available for 2-hour ahead forecast for the selected time on selected date.")
+        pass
 
     fig1.update_layout(
         title="Daily Forecast GHI",
@@ -245,6 +245,7 @@ else:
 
         st.plotly_chart(fig2, use_container_width=True, key="gfs_vs_daily_forecast")
 
+
     with right_col:
         fig3 = go.Figure()
 
@@ -264,13 +265,26 @@ else:
             ))
 
             fig3_title = "GFS vs 2-Hour Ahead Forecast"
-            fig3_tick_times = two_hour_df["valid_time_ist"].dt.strftime("%H:%M").tolist()
+            fig3_note = None
             fig3_tick_vals = two_hour_df["valid_time_ist"]
+            fig3_tick_times = two_hour_df["valid_time_ist"].dt.strftime("%H:%M").tolist()
 
         else:
-            fig3_title = "2-Hour Ahead Forecast"
-            fig3_tick_times = tick_times
+            fig3_title = "2-Hour Ahead Forecast Not Available"
+
+            selected_target_time = two_hour_end_time.strftime("%H:%M")
+
+            if day_df.empty:
+                fig3_note = f"No data available for selected date: {selected_date}"
+            else:
+                fig3_note = (
+                    f"No 2-hour ahead forecast available for selected time "
+                    f"{selected_time.strftime('%H:%M')} "
+                    f"(target time: {selected_target_time})"
+                )
+
             fig3_tick_vals = day_df["valid_time_ist"]
+            fig3_tick_times = day_df["valid_time_ist"].dt.strftime("%H:%M").tolist()
 
         fig3.update_layout(
             title=fig3_title,
@@ -293,6 +307,22 @@ else:
         )
 
         fig3.update_yaxes(range=[0, ymax])
+
+        if fig3_note is not None:
+            fig3.add_annotation(
+                text=fig3_note,
+                xref="paper",
+                yref="paper",
+                x=0.5,
+                y=0.5,
+                showarrow=False,
+                font=dict(size=15, color="red"),
+                align="center",
+                bordercolor="red",
+                borderwidth=1,
+                borderpad=8,
+                bgcolor="rgba(255,255,255,0.85)"
+            )
 
         st.plotly_chart(fig3, use_container_width=True, key="two_hour_gfs_comparison")
 
