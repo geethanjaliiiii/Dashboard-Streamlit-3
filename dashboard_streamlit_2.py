@@ -145,7 +145,7 @@ else:
 
     fig1.update_yaxes(range=[0, ymax])
 
-    row1_col, row1_space = st.columns([5, 0.4])
+    row1_col, row1_space = st.columns([4.5, 0.8])
 
 with row1_col:
     st.plotly_chart(fig1, use_container_width=True)
