@@ -824,8 +824,3 @@ else:
             else:
                 st.warning("No valid 2-hour ahead forecast data available for overall performance.")
 
-        st.info(
-            "Before (GFS): Original GFS forecast  |  "
-            "After (Daily Forecast): Daily Forecast GHI  |  "
-            "2-Hour Ahead: Short-term 2-hour ahead forecast"
-        )
