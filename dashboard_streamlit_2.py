@@ -515,3 +515,113 @@ else:
         st.warning(
             "Not enough valid previous-day data to calculate cumulative forecast performance."
         )
+    # =====================================================
+    # OVERALL FULL-DATA PERFORMANCE METRICS
+    # =====================================================
+    
+    overall_df = df.dropna(
+        subset=["Actual_GHI", "GFS_GHI", "Daily_Forecast_GHI"]
+    ).copy()
+    
+    overall_df["hour"] = (
+        overall_df["valid_time_ist"].dt.hour +
+        overall_df["valid_time_ist"].dt.minute / 60
+    )
+    
+    overall_df = overall_df[
+        (overall_df["hour"] >= 6.5) &
+        (overall_df["hour"] <= 17.5) &
+        (overall_df["Actual_GHI"] > 50)
+    ].copy()
+    
+    if not overall_df.empty:
+    
+        actual_all = overall_df["Actual_GHI"]
+        before_all = overall_df["GFS_GHI"]
+        after_all = overall_df["Daily_Forecast_GHI"]
+    
+        overall_mape_before = ((actual_all - before_all).abs() / actual_all).mean() * 100
+        overall_mape_after = ((actual_all - after_all).abs() / actual_all).mean() * 100
+    
+        overall_mae_before = (actual_all - before_all).abs().mean()
+        overall_mae_after = (actual_all - after_all).abs().mean()
+    
+        overall_rmse_before = np.sqrt(((actual_all - before_all) ** 2).mean())
+        overall_rmse_after = np.sqrt(((actual_all - after_all) ** 2).mean())
+    
+        st.markdown("### 📌 Overall Forecast Performance on Complete Dataset")
+    
+        left_summary, right_blank = st.columns([1.2, 1])
+    
+        with left_summary:
+            st.markdown(
+                f"""
+                <div style="
+                    border: 1px solid #ddd;
+                    border-radius: 14px;
+                    padding: 18px;
+                    background-color: #fafafa;
+                    box-shadow: 0px 2px 8px rgba(0,0,0,0.08);
+                ">
+                    <h4 style="text-align:center; margin-bottom:18px;">
+                        Daily Forecast GHI: Before vs After
+                    </h4>
+    
+                    <div style="display:flex; gap:12px; justify-content:space-between;">
+    
+                        <div style="
+                            flex:1;
+                            border-radius:12px;
+                            padding:12px;
+                            background-color:white;
+                            text-align:center;
+                            border-top:5px solid steelblue;
+                        ">
+                            <h5>MAPE</h5>
+                            <p style="font-size:14px; margin:4px;">Before</p>
+                            <h3>{overall_mape_before:.2f}%</h3>
+                            <p style="font-size:14px; margin:4px;">After</p>
+                            <h3 style="color:red;">{overall_mape_after:.2f}%</h3>
+                        </div>
+    
+                        <div style="
+                            flex:1;
+                            border-radius:12px;
+                            padding:12px;
+                            background-color:white;
+                            text-align:center;
+                            border-top:5px solid steelblue;
+                        ">
+                            <h5>MAE</h5>
+                            <p style="font-size:14px; margin:4px;">Before</p>
+                            <h3>{overall_mae_before:.2f}</h3>
+                            <p style="font-size:14px; margin:4px;">After</p>
+                            <h3 style="color:red;">{overall_mae_after:.2f}</h3>
+                        </div>
+    
+                        <div style="
+                            flex:1;
+                            border-radius:12px;
+                            padding:12px;
+                            background-color:white;
+                            text-align:center;
+                            border-top:5px solid steelblue;
+                        ">
+                            <h5>RMSE</h5>
+                            <p style="font-size:14px; margin:4px;">Before</p>
+                            <h3>{overall_rmse_before:.2f}</h3>
+                            <p style="font-size:14px; margin:4px;">After</p>
+                            <h3 style="color:red;">{overall_rmse_after:.2f}</h3>
+                        </div>
+    
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+    
+        with right_blank:
+            st.empty()
+    
+    else:
+        st.warning("Not enough valid data to calculate complete-dataset performance metrics.")
