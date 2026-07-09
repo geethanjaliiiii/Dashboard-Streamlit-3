@@ -274,14 +274,11 @@ else:
 
             selected_target_time = two_hour_end_time.strftime("%H:%M")
 
-            if day_df.empty:
-                fig3_note = f"No data available for selected date: {selected_date}"
-            else:
-                fig3_note = (
-                    f"No 2-hour ahead forecast available for selected time "
-                    f"{selected_time.strftime('%H:%M')} "
-                    f"(target time: {selected_target_time})"
-                )
+            fig3_note = (
+                f"No 2-hour ahead forecast available on {selected_date} "
+                f"for selected time {selected_time.strftime('%H:%M')} "
+                f"(target time: {selected_target_time})"
+            )
 
             fig3_tick_vals = day_df["valid_time_ist"]
             fig3_tick_times = day_df["valid_time_ist"].dt.strftime("%H:%M").tolist()
