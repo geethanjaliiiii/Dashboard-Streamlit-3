@@ -235,7 +235,7 @@ else:
         st.plotly_chart(fig3, use_container_width=True, key="daily_forecast_side")
 
     
-        # =====================================================
+    # =====================================================
     # PREVIOUS DAY COMPARISON PLOTS
     # =====================================================
 
@@ -554,46 +554,66 @@ else:
         left_summary, right_blank = st.columns([1.2, 1])
     
         with left_summary:
-            
-            st.markdown("#### 📊 Daily Forecast GHI: Before vs After")
+            st.markdown("### 📌 Daily Forecast GHI: Overall Forecast Performance")
 
-            c1, c2, c3 = st.columns(3)
-        
-            with c1:
-                with st.container(border=True):
-                    st.markdown("### MAPE")
-                    st.metric(
-                        "Before",
-                        f"{overall_mape_before:.2f}%"
-                    )
-                    st.metric(
-                        "After",
-                        f"{overall_mape_after:.2f}%"
-                    )
-        
-            with c2:
-                with st.container(border=True):
-                    st.markdown("### MAE")
-                    st.metric(
-                        "Before",
-                        f"{overall_mae_before:.2f}"
-                    )
-                    st.metric(
-                        "After",
-                        f"{overall_mae_after:.2f}"
-                    )
-        
-            with c3:
-                with st.container(border=True):
-                    st.markdown("### RMSE")
-                    st.metric(
-                        "Before",
-                        f"{overall_rmse_before:.2f}"
-                    )
-                    st.metric(
-                        "After",
-                        f"{overall_rmse_after:.2f}"
-                    )
+            k1, k2, k3 = st.columns(3)
+
+            with k1:
+                st.markdown(
+                    f"""
+                    <div style="
+                        border:1px solid #ddd;
+                        border-radius:10px;
+                        padding:20px;
+                        background-color:white;
+                    ">
+                        <h4 style="color:#d71920;">MAPE</h4>
+                        <p style="font-size:16px; margin-bottom:5px;">Before</p>
+                        <h2 style="color:#1f4fd6;">{overall_mape_before:.2f}%</h2>
+                        <p style="font-size:16px; margin-bottom:5px;">After</p>
+                        <h2 style="color:red;">{overall_mape_after:.2f}%</h2>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+            with k2:
+                st.markdown(
+                    f"""
+                    <div style="
+                        border:1px solid #ddd;
+                        border-radius:10px;
+                        padding:20px;
+                        background-color:white;
+                    ">
+                        <h4 style="color:#d71920;">MAE</h4>
+                        <p style="font-size:16px; margin-bottom:5px;">Before</p>
+                        <h2 style="color:#1f4fd6;">{overall_mae_before:.2f}</h2>
+                        <p style="font-size:16px; margin-bottom:5px;">After</p>
+                        <h2 style="color:red;">{overall_mae_after:.2f}</h2>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+            with k3:
+                st.markdown(
+                    f"""
+                    <div style="
+                        border:1px solid #ddd;
+                        border-radius:10px;
+                        padding:20px;
+                        background-color:white;
+                    ">
+                        <h4 style="color:#d71920;">RMSE</h4>
+                        <p style="font-size:16px; margin-bottom:5px;">Before</p>
+                        <h2 style="color:#1f4fd6;">{overall_rmse_before:.2f}</h2>
+                        <p style="font-size:16px; margin-bottom:5px;">After</p>
+                        <h2 style="color:red;">{overall_rmse_after:.2f}</h2>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
     
         with right_blank:
             st.empty()
