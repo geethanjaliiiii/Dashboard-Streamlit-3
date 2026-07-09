@@ -147,8 +147,8 @@ else:
 
     row1_col, row1_space = st.columns([4.5, 0.8])
 
-with row1_col:
-    st.plotly_chart(fig1, use_container_width=True)
+    with row1_col:
+        st.plotly_chart(fig1, use_container_width=True, key="daily_forecast_main")
     # =====================================================
     # SECOND ROW: TWO PLOTS
     # LEFT: GFS VS DAILY FORECAST
@@ -198,7 +198,7 @@ with row1_col:
 
         fig2.update_yaxes(range=[0, ymax])
 
-        st.plotly_chart(fig2, use_container_width=True)
+        st.plotly_chart(fig2, use_container_width=True, key="gfs_vs_daily_forecast")
 
     with right_col:
         fig3 = go.Figure()
@@ -235,7 +235,7 @@ with row1_col:
 
         fig3.update_yaxes(range=[0, ymax])
 
-        st.plotly_chart(fig3, use_container_width=True)
+        st.plotly_chart(fig3, use_container_width=True, key="daily_forecast_side")
 
 
     # =====================================================
@@ -284,7 +284,7 @@ with row1_col:
                 height=350
             )
 
-            st.plotly_chart(fig_mae, use_container_width=True)
+            st.plotly_chart(fig_mae, use_container_width=True, key="mae_chart")
 
         with metric_col2:
             fig_rmse = go.Figure()
@@ -304,7 +304,7 @@ with row1_col:
                 height=350
             )
 
-            st.plotly_chart(fig_rmse, use_container_width=True)
+            st.plotly_chart(fig_rmse, use_container_width=True, key="rmse_chart")
 
         with metric_col3:
             fig_mape = go.Figure()
@@ -324,7 +324,7 @@ with row1_col:
                 height=350
             )
 
-            st.plotly_chart(fig_mape, use_container_width=True)
+            st.plotly_chart(fig_mape, use_container_width=True, key="mape_chart")
 
     else:
         st.warning("Not enough valid daytime data to calculate daily error metrics.")
