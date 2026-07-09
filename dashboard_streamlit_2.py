@@ -14,12 +14,12 @@ import plotly.graph_objects as go
 from datetime import time
 
 st.set_page_config(
-    page_title="Solar Power Forecasting Dashboard",
+    page_title="Solar GHI Forecasting Dashboard",
     layout="wide"
 )
 
 st.markdown(
-    "<h1 style='text-align: center;'>☀️ Solar Power Forecasting Dashboard</h1>",
+    "<h1 style='text-align: center;'>☀️ Solar GHI Forecasting Dashboard</h1>",
     unsafe_allow_html=True
 )
 
