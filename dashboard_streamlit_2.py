@@ -108,44 +108,55 @@ else:
 
     tick_times = day_df["valid_time_ist"].dt.strftime("%H:%M").tolist()
 
+    # =====================================================
+    # FIRST ROW: DAILY FORECAST GHI ONLY
+    # =====================================================
+
+    fig1 = go.Figure()
+
+    fig1.add_trace(go.Scatter(
+        x=day_df["valid_time_ist"],
+        y=day_df["Daily_Forecast_GHI"],
+        mode="lines+markers",
+        name="Daily Forecast GHI",
+        line=dict(color="red"),
+        marker=dict(color="red")
+    ))
+
+    fig1.update_layout(
+        title="Daily Forecast GHI",
+        xaxis_title="Time",
+        yaxis_title="GHI",
+        height=450,
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="right",
+            x=1
+        )
+    )
+
+    fig1.update_xaxes(
+        tickmode="array",
+        tickvals=day_df["valid_time_ist"],
+        ticktext=tick_times
+    )
+
+    fig1.update_yaxes(range=[0, ymax])
+
+    st.plotly_chart(fig1, use_container_width=True)
+
+    # =====================================================
+    # SECOND ROW: TWO PLOTS
+    # LEFT: GFS VS DAILY FORECAST
+    # RIGHT: ACTUAL GHI ONLY
+    # =====================================================
+
+    left_col, right_col = st.columns(2)
+
     with left_col:
-        fig1 = go.Figure()
-
-        fig1.add_trace(go.Scatter(
-            x=day_df["valid_time_ist"],
-            y=day_df["Daily_Forecast_GHI"],
-            mode="lines+markers",
-            name="Daily Forecast GHI",
-            line=dict(color="red"),
-            marker=dict(color="red")
-        ))
-
-        fig1.update_layout(
-            title="Daily Forecast GHI",
-            xaxis_title="Time",
-            yaxis_title="GHI",
-            height=450
-        )
-
-        fig1.update_xaxes(
-            tickmode="array",
-            tickvals=day_df["valid_time_ist"],
-            ticktext=tick_times
-        )
-
-        fig1.update_yaxes(range=[0, ymax])
-
-        st.plotly_chart(fig1, use_container_width=True)
-
-    with right_col:
         fig2 = go.Figure()
-
-        fig2.add_trace(go.Scatter(
-            x=day_df["valid_time_ist"],
-            y=day_df["Actual_GHI"],
-            mode="lines+markers",
-            name="Actual GHI"
-        ))
 
         fig2.add_trace(go.Scatter(
             x=day_df["valid_time_ist"],
@@ -158,14 +169,23 @@ else:
             x=day_df["valid_time_ist"],
             y=day_df["Daily_Forecast_GHI"],
             mode="lines+markers",
-            name="Daily Forecast GHI"
+            name="Daily Forecast GHI",
+            line=dict(color="red"),
+            marker=dict(color="red")
         ))
 
         fig2.update_layout(
-            title="Actual vs GFS vs Daily Forecast GHI",
+            title="GFS vs Daily Forecast GHI",
             xaxis_title="Time",
             yaxis_title="GHI",
-            height=450
+            height=450,
+            legend=dict(
+                orientation="h",
+                yanchor="bottom",
+                y=1.02,
+                xanchor="right",
+                x=1
+            )
         )
 
         fig2.update_xaxes(
@@ -177,6 +197,40 @@ else:
         fig2.update_yaxes(range=[0, ymax])
 
         st.plotly_chart(fig2, use_container_width=True)
+
+    with right_col:
+        fig3 = go.Figure()
+
+        fig3.add_trace(go.Scatter(
+            x=day_df["valid_time_ist"],
+            y=day_df["Actual_GHI"],
+            mode="lines+markers",
+            name="Actual GHI"
+        ))
+
+        fig3.update_layout(
+            title="Actual GHI",
+            xaxis_title="Time",
+            yaxis_title="GHI",
+            height=450,
+            legend=dict(
+                orientation="h",
+                yanchor="bottom",
+                y=1.02,
+                xanchor="right",
+                x=1
+            )
+        )
+
+        fig3.update_xaxes(
+            tickmode="array",
+            tickvals=day_df["valid_time_ist"],
+            ticktext=tick_times
+        )
+
+        fig3.update_yaxes(range=[0, ymax])
+
+        st.plotly_chart(fig3, use_container_width=True)
 
 
     # =====================================================
